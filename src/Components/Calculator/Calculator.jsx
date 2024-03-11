@@ -21,7 +21,7 @@ const calcData = [
   { id: "decimal", value: "." },
 ];
 
-const operators = ["+", "-", "x", "/"];
+const operators = ["AC", "/", "x", "+", "-", "="];
 
 const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
@@ -60,9 +60,13 @@ const Calculator = () => {
   const [output, setOutput] = React.useState("");
 
   const handleSubmit = () => {
-    console.log(handleSubmit);
+    console.log(handleSubmit, calculatorData);
+    const total = eval(calculatorData);
+    setInput(`${total}`);
+    setOutput(`${total}`);
+    setCalculatorData(`${total}`);
   };
-  const handleClear = () => {
+  const handleClear = () =>  {
     console.log("handleClear called");
     setInput("0");
     setOutput("");
@@ -99,27 +103,34 @@ const Calculator = () => {
 
       const beforeLastChatIsOperator =
         operators.includes(beforeLastChat) || beforeLastChat === "*";
-      
-        const lastChat = calculatorData.charAt(calculatorData.length - 1);
 
-        const lastChatIsOperator = operators.includes(lastChat) || lastChat === "*";
+      const lastChat = calculatorData.charAt(calculatorData.length - 1);
 
-        const validOp = value === "x" ? "*" : value;
-        if(
-          (lastChatIsOperator && value !== "-") ||  beforeLastChatIsOperator && lastChatIsOperator
-        ){
-          if(beforeLastChatIsOperator){
-            const updatedValue = `${calculatorData.substring(
-              0,setCalculatorData.length - 2
-            )}${value}`;
-            setCalculatorData(updatedValue);
-          }else{
-            setCalculatorData(`${calculatorData.substring(0,calculatorData.length - 1)}${validOp}`);
-          }
-        }else{
-          setCalculatorData(`${calculatorData}${validOp}`);
+      const lastChatIsOperator =
+        operators.includes(lastChat) || lastChat === "*";
+
+      const validOp = value === "x" ? "*" : value;
+      if (
+        (lastChatIsOperator && value !== "-") ||
+        (beforeLastChatIsOperator && lastChatIsOperator)
+      ) {
+        if (beforeLastChatIsOperator) {
+          const updatedValue = `${calculatorData.substring(
+            0,
+            setCalculatorData.length - 2
+          )}${value}`;
+          setCalculatorData(updatedValue);
+        } else {
+          setCalculatorData(
+            `${calculatorData.substring(
+              0,
+              calculatorData.length - 1
+            )}${validOp}`
+          );
         }
-
+      } else {
+        setCalculatorData(`${calculatorData}${validOp}`);
+      }
     }
   };
 
