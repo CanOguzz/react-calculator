@@ -1,4 +1,5 @@
 import React from "react";
+import * as ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
 import "./Calculator.css";
 
 const calcData = [
@@ -23,7 +24,7 @@ const calcData = [
 
 const operators = ["AC", "/", "x", "+", "-", "="];
 
-const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const Display = ({ input, output }) => {
   return (
@@ -55,22 +56,42 @@ const Keyboard = ({ handleInput }) => {
 };
 
 const Calculator = () => {
-  const [calculatorData, setCalculatorData] = React.useState("");
+  
   const [input, setInput] = React.useState("0");
   const [output, setOutput] = React.useState("");
+  const [calculatorData, setCalculatorData] = React.useState("");
 
   const handleSubmit = () => {
     console.log(handleSubmit, calculatorData);
     const total = eval(calculatorData);
-    setInput(`${total}`);
-    setOutput(`${total}`);
-    setCalculatorData(`${total}`);
+      setInput(total);
+      setOutput(`${total} = ${total}`);
+      setCalculatorData(`${total}`);
   };
-  const handleClear = () =>  {
+  const handleClear = () => {
     console.log("handleClear called");
     setInput("0");
-    setOutput("");
     setCalculatorData("");
+  };
+
+  const handleNumbers = (value) => {
+    console.log("handleNumbers called with value:", value);
+    console.log("handleNumbers");
+    if (!calculatorData.length) {
+      setInput(`${value}`);
+      setCalculatorData(`${value}`);
+    } else {
+      if (value === 0 && (calculatorData === "0" || input === "0")) {
+        setCalculatorData(`${calculatorData}`);
+      } else {
+        const lastChat = calculatorData.charAt(calculatorData.length - 1);
+        const isLastChatOperator =
+          lastChat === "*" || operators.includes(lastChat);
+
+        setInput(isLastChatOperator ? `${value}` : `${input}${value}`);
+        setCalculatorData(`${calculatorData}${value}`);
+      }
+    }
   };
 
   const dotOperator = () => {
@@ -117,7 +138,7 @@ const Calculator = () => {
         if (beforeLastChatIsOperator) {
           const updatedValue = `${calculatorData.substring(
             0,
-            setCalculatorData.length - 2
+            calculatorData.length - 2
           )}${value}`;
           setCalculatorData(updatedValue);
         } else {
@@ -134,50 +155,28 @@ const Calculator = () => {
     }
   };
 
-  const handleNumbers = (value) => {
-    console.log("handleNumbers called with value:", value);
-    console.log("handleNumbers");
-    if (!calculatorData.length) {
-      setInput(`${value}`);
-      setCalculatorData(`${value}`);
-    } else {
-      if (value === 0 && (calculatorData === "0" || input === "0")) {
-        setCalculatorData(`${calculatorData}`);
-      } else {
-        const lastChat = calculatorData.charAt(calculatorData.length - 1);
-        const isLastChatOperator =
-          lastChat === "*" || operators.includes(lastChat);
-
-        setInput(isLastChatOperator ? `${value}` : `${input}${value}`);
-        setCalculatorData(`${calculatorData}${value}`);
-      }
-    }
-  };
-
   const handleInput = (value) => {
-    console.log("handleInput called with value:", value);
-    const number = numbers.find((num) => num === value.toString());
-    console.log("number:", number);
-    const operator = operators.find((op) => op === value.toString());
+    const number = numbers.find((num) => num === value);
+    const operator = operators.find((op) => op === value);
 
-    if (number !== undefined) {
-      handleNumbers(value);
-    } else if (operator !== undefined) {
-      handleOperators(value);
-    } else {
-      switch (value) {
-        case "=":
-          handleSubmit();
-          break;
-        case "AC":
-          handleClear();
-          break;
-        case ".":
-          dotOperator();
-          break;
-        default:
-          break;
-      }
+    switch (value) {
+      case "=":
+        handleSubmit();
+        break;
+      case "AC":
+        handleClear();
+        break;
+      case number:
+        handleNumbers(value);
+        break;
+      case ".":
+        dotOperator(value);
+        break;
+      case operator:
+        handleOperators(value);
+        break;
+      default:
+        break;
     }
   };
 
@@ -200,3 +199,4 @@ const Calculator = () => {
 };
 
 export default Calculator;
+
