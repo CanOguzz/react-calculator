@@ -23,7 +23,7 @@ const calcData = [
 
 const operators = ["+", "-", "x", "/"];
 
-const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 const Display = ({ input, output }) => {
   return (
@@ -35,12 +35,6 @@ const Display = ({ input, output }) => {
     </div>
   );
 };
-
-// const Key = ({ keyData: { id, value }, handleInput }) => (
-//     <button id={id} onClick={() => handleInput(value)}>
-//       {value}
-//     </button>
-//   );
 
 const Key = ({ keyData: { id, value }, handleInput }) => {
   return (
@@ -69,14 +63,64 @@ const Calculator = () => {
     console.log(handleSubmit);
   };
   const handleClear = () => {
-
+    console.log("handleClear called");
+    setInput("0");
+    setOutput("");
+    setCalculatorData("");
   };
 
- 
-  const dotOperator = () => {};
-
+  const dotOperator = () => {
+    console.log("dotOperator called");
+    const lastChat = calculatorData.charAt(calculatorData.length - 1);
+    if (!calculatorData.length) {
+      setInput("0.");
+      setCalculatorData("0.");
+    } else {
+      if (lastChat === "*" || operators.includes(lastChat)) {
+        setInput("0.");
+        setCalculatorData(`${calculatorData}0.`);
+      } else {
+        setInput(
+          lastChat === "." || input.includes(".") ? `${input}` : `${input}.`
+        );
+        const formatedValue =
+          lastChat === "." || input.includes(".")
+            ? `${calculatorData}`
+            : `${calculatorData}.`;
+        setCalculatorData(formatedValue);
+      }
+    }
+  };
   const handleOperators = (value) => {
     console.log("handleOperators");
+    if (calculatorData.length) {
+      setInput(`${value}`);
+      const beforeLastChat = calculatorData.charAt(calculatorData.length - 2);
+
+      const beforeLastChatIsOperator =
+        operators.includes(beforeLastChat) || beforeLastChat === "*";
+      
+        const lastChat = calculatorData.charAt(calculatorData.length - 1);
+
+        const lastChatIsOperator = operators.includes(lastChat) || lastChat === "*";
+
+        const validOp = value === "x" ? "*" : value;
+        if(
+          (lastChatIsOperator && value !== "-") ||  beforeLastChatIsOperator && lastChatIsOperator
+        ){
+          if(beforeLastChatIsOperator){
+            const updatedValue = `${calculatorData.substring(
+              0,setCalculatorData.length - 2
+            )}${value}`;
+            setCalculatorData(updatedValue);
+          }else{
+            setCalculatorData(`${calculatorData.substring(0,calculatorData.length - 1)}${validOp}`);
+          }
+        }else{
+          setCalculatorData(`${calculatorData}${validOp}`);
+        }
+
+    }
   };
 
   const handleNumbers = (value) => {
@@ -106,25 +150,25 @@ const Calculator = () => {
     const operator = operators.find((op) => op === value.toString());
 
     if (number !== undefined) {
-        handleNumbers(value);
+      handleNumbers(value);
     } else if (operator !== undefined) {
-        handleOperators(value);
+      handleOperators(value);
     } else {
-        switch (value) {
-            case "=":
-                handleSubmit();
-                break;
-            case "AC":
-                handleClear();
-                break;
-            case ".":
-                dotOperator();
-                break;
-            default:
-                break;
-        }
+      switch (value) {
+        case "=":
+          handleSubmit();
+          break;
+        case "AC":
+          handleClear();
+          break;
+        case ".":
+          dotOperator();
+          break;
+        default:
+          break;
+      }
     }
-};
+  };
 
   const handleOutput = () => {
     setOutput(calculatorData);
