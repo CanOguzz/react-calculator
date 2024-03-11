@@ -23,7 +23,7 @@ const calcData = [
 
 const operators = ["+", "-", "x", "/"];
 
-const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 const Display = ({ input, output }) => {
   return (
@@ -61,15 +61,73 @@ const Keyboard = ({ handleInput }) => {
 };
 
 const Calculator = () => {
-  const [calculatorData, setCalculatorData] = React.useState("0");
+  const [calculatorData, setCalculatorData] = React.useState("");
   const [input, setInput] = React.useState("0");
   const [output, setOutput] = React.useState("");
 
-  const handleInput = (value) => {
-console.log(value)
+  const handleSubmit = () => {
+    console.log(handleSubmit);
   };
+  const handleClear = () => {
+
+  };
+
+ 
+  const dotOperator = () => {};
+
+  const handleOperators = (value) => {
+    console.log("handleOperators");
+  };
+
+  const handleNumbers = (value) => {
+    console.log("handleNumbers called with value:", value);
+    console.log("handleNumbers");
+    if (!calculatorData.length) {
+      setInput(`${value}`);
+      setCalculatorData(`${value}`);
+    } else {
+      if (value === 0 && (calculatorData === "0" || input === "0")) {
+        setCalculatorData(`${calculatorData}`);
+      } else {
+        const lastChat = calculatorData.charAt(calculatorData.length - 1);
+        const isLastChatOperator =
+          lastChat === "*" || operators.includes(lastChat);
+
+        setInput(isLastChatOperator ? `${value}` : `${input}${value}`);
+        setCalculatorData(`${calculatorData}${value}`);
+      }
+    }
+  };
+
+  const handleInput = (value) => {
+    console.log("handleInput called with value:", value);
+    const number = numbers.find((num) => num === value.toString());
+    console.log("number:", number);
+    const operator = operators.find((op) => op === value.toString());
+
+    if (number !== undefined) {
+        handleNumbers(value);
+    } else if (operator !== undefined) {
+        handleOperators(value);
+    } else {
+        switch (value) {
+            case "=":
+                handleSubmit();
+                break;
+            case "AC":
+                handleClear();
+                break;
+            case ".":
+                dotOperator();
+                break;
+            default:
+                break;
+        }
+    }
+};
+
   const handleOutput = () => {
-    setOutput(calculatorData)
+    setOutput(calculatorData);
   };
 
   React.useEffect(() => {
